@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lower Third Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="studio-page">
+  <header class="topbar">
+    <div>
+      <h1>Lower Third Studio</h1>
+      <p>Lokale Steuerung für animierte Stream-Banner.</p>
+    </div>
+    <div class="top-actions">
+      <label class="theme-picker" title="Farbschema des Interfaces auswählen">
+        <span>Interface</span>
+        <select id="interfaceThemeInput" aria-label="Interface-Farbschema">
+          <option value="default">Studio Grün</option>
+          <option value="midnight">Midnight Blau</option>
+          <option value="ember">Ember Rot</option>
+        </select>
+      </label>
+      <div class="app-tabs" role="tablist" aria-label="Ansicht">
+        <button class="tab-button active" id="studioTabButton" type="button" role="tab" aria-selected="true" aria-controls="studioView">Studio</button>
+        <button class="tab-button" id="licenseTabButton" type="button" role="tab" aria-selected="false" aria-controls="licenseView">Lizenz</button>
+      </div>
+      <button class="button ghost" id="topCopyLinkButton">Player URL kopieren</button>
+      <button class="button primary" id="saveButton">Speichern</button>
+    </div>
+  </header>
+
+  <main class="studio-layout app-view active" id="studioView">
+    <section class="panel list-panel" aria-label="Lower Thirds">
+      <div class="panel-head">
+        <h2>Lower Thirds</h2>
+        <button class="icon-button" id="addThirdButton" title="Neuen Banner erstellen" aria-label="Neuen Banner erstellen">+</button>
+      </div>
+      <div class="third-list" id="thirdList"></div>
+    </section>
+
+    <section class="panel editor-panel" aria-label="Editor">
+      <div class="panel-head">
+        <h2>Editor</h2>
+        <button class="button danger" id="deleteButton">Löschen</button>
+      </div>
+
+      <div class="editor-section">
+        <div class="section-title">
+          <h3>Inhalt</h3>
+          <button class="button tiny" data-reset-section="content" type="button">Standard</button>
+        </div>
+        <div class="section-grid">
+          <label>
+            <span class="field-head">
+              <span>Titel</span>
+              <span class="help-dot" title="Hauptzeile des Lower Thirds. Mit dem Schalter rechts kannst du diese Zeile ausblenden, ohne den Text zu löschen.">?</span>
+              <input class="inline-toggle" id="showTitleInput" type="checkbox" title="Titel anzeigen">
+            </span>
+            <input id="titleInput" type="text" maxlength="48">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Unterzeile</span>
+              <span class="help-dot" title="Optionale zweite Zeile für Beschreibung, Claim oder Hinweis. Leerer Inhalt wird automatisch nicht angezeigt.">?</span>
+              <input class="inline-toggle" id="showSubtitleInput" type="checkbox" title="Unterzeile anzeigen">
+            </span>
+            <input id="subtitleInput" type="text" maxlength="70">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Plattform</span>
+              <span class="help-dot" title="Name der Plattform. Wird auch für das Plattform-Logo genutzt, wenn Icon auf Plattform-Logo steht.">?</span>
+              <input class="inline-toggle" id="showPlatformInput" type="checkbox" title="Plattformname anzeigen">
+            </span>
+            <select id="platformInput">
+              <option>Instagram</option>
+              <option>YouTube</option>
+              <option>Twitch</option>
+              <option>TikTok</option>
+              <option>Web</option>
+              <option>Podcast</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle / URL</span>
+              <span class="help-dot" title="Accountname, Kurzlink oder URL. Der Schalter blendet nur die Zeile aus, nicht die gespeicherte Eingabe.">?</span>
+              <input class="inline-toggle" id="showHandleInput" type="checkbox" title="Handle / URL anzeigen">
+            </span>
+            <input id="handleInput" type="text" maxlength="48">
+          </label>
+        </div>
+      </div>
+
+      <div class="editor-section">
+        <div class="section-title">
+          <h3>Darstellung</h3>
+          <button class="button tiny" data-reset-section="appearance" type="button">Standard</button>
+        </div>
+        <div class="section-grid">
+          <label>
+            <span class="field-head">
+              <span>Stil</span>
+              <span class="help-dot" title="Grundlayout und Hintergrund des Banners.">?</span>
+            </span>
+            <select id="styleInput">
+              <option value="solid">Klar</option>
+              <option value="glass">Glas</option>
+              <option value="stripe">Akzentstreifen</option>
+              <option value="compact">Kompakt</option>
+              <option value="sports">Sportstudio</option>
+              <option value="scoreboard">Scoreboard</option>
+              <option value="ticker">Ticker</option>
+              <option value="broadcast">Broadcast</option>
+              <option value="slab">Bold Slab</option>
+              <option value="chrome">Chrome</option>
+              <option value="holo">Hologramm</option>
+              <option value="ribbon">Ribbon</option>
+              <option value="esports">E-Sports</option>
+              <option value="studio">Studio Live</option>
+              <option value="kinetic">Kinetic</option>
+              <option value="glassline">Glassline</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Animation</span>
+              <span class="help-dot" title="Ein- und Ausblendbewegung des kompletten Lower Thirds.">?</span>
+            </span>
+            <select id="animationInput">
+              <option value="slide">Slide</option>
+              <option value="wipe">Wipe</option>
+              <option value="pop">Pop</option>
+              <option value="rise">Rise</option>
+              <option value="flip">Flip</option>
+              <option value="bounce">Bounce</option>
+              <option value="zoom">Zoom</option>
+              <option value="swing">Swing</option>
+              <option value="elastic">Elastic</option>
+              <option value="blur">Blur</option>
+              <option value="streak">Streak</option>
+              <option value="rotate">Rotate</option>
+              <option value="neon">Neon Pulse</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Position</span>
+              <span class="help-dot" title="Position des Banners im Player und in der Vorschau.">?</span>
+            </span>
+            <select id="positionInput">
+              <option value="left">Links unten</option>
+              <option value="center">Mitte unten</option>
+              <option value="right">Rechts unten</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon</span>
+              <span class="help-dot" title="Symbol links im Banner. Plattform-Logo lädt zuerst aus dem lokalen Logo-Ordner und nutzt danach den offiziellen Website-Fallback.">?</span>
+            </span>
+            <select id="iconInput">
+              <option value="platform">Plattform-Logo</option>
+              <option value="camera">Kamera</option>
+              <option value="play">Play</option>
+              <option value="chat">Chat</option>
+              <option value="music">Musik</option>
+              <option value="link">Link</option>
+              <option value="star">Stern</option>
+              <option value="heart">Herz</option>
+              <option value="bell">Glocke</option>
+              <option value="at">At-Zeichen</option>
+              <option value="hash">Hashtag</option>
+              <option value="bolt">Blitz</option>
+              <option value="custom">Upload-Bild</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon-Hintergrund</span>
+              <span class="help-dot" title="Blendet das Farbfeld hinter dem Plattformlogo oder Symbol ein oder aus.">?</span>
+            </span>
+            <input class="inline-toggle" id="iconBgEnabledInput" type="checkbox">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon-Hintergrundfarbe</span>
+              <span class="help-dot" title="Eigene Farbe für das Feld hinter dem Symbol, unabhängig von der Hauptfarbe.">?</span>
+            </span>
+            <input id="iconBgColorInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon-Hintergrund Modus</span>
+              <span class="help-dot" title="Solid Color oder Farbverlauf für das Feld hinter dem Symbol.">?</span>
+            </span>
+            <select id="iconBgColorModeInput">
+              <option value="solid">Solid Color</option>
+              <option value="gradient">Farbverlauf</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon-Hintergrund Verlauf</span>
+              <span class="help-dot" title="Verlaufsvorlage oder eigene zwei Farben für den Icon-Hintergrund.">?</span>
+            </span>
+            <select id="iconBgGradientPresetInput">
+              <option value="custom">Eigener Verlauf</option>
+              <option value="sunset">Sunset</option>
+              <option value="ocean">Ocean</option>
+              <option value="neon">Neon</option>
+              <option value="sports">Sports</option>
+              <option value="gold">Gold</option>
+              <option value="ice">Ice</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon Verlauf 1</span>
+              <span class="help-dot" title="Startfarbe für den eigenen Icon-Hintergrund-Verlauf.">?</span>
+            </span>
+            <input id="iconBgGradientFromInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon Verlauf 2</span>
+              <span class="help-dot" title="Endfarbe für den eigenen Icon-Hintergrund-Verlauf.">?</span>
+            </span>
+            <input id="iconBgGradientToInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Icon-Hintergrund Transparenz</span>
+              <span class="help-dot" title="Deckkraft des Symbol-Hintergrunds.">?</span>
+            </span>
+            <input id="iconBgAlphaInput" type="range" min="0" max="100" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Logo-Skalierung</span>
+              <span class="help-dot" title="Größe des Plattformlogos oder Upload-Symbols im Icon-Feld.">?</span>
+            </span>
+            <input id="iconScaleInput" type="range" min="40" max="115" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Eigenes Symbol</span>
+              <span class="help-dot" title="Lädt ein eigenes Bild als Symbol. Das Bild wird lokal im Browser gespeichert und im Player-Link eingebettet.">?</span>
+            </span>
+            <input id="customIconInput" type="file" accept="image/*">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Hauptfarbe</span>
+              <span class="help-dot" title="Akzentfarbe für Icon, Markierungen, Handle und Rahmen. Die Transparenz steuerst du mit dem Regler daneben.">?</span>
+            </span>
+            <input id="accentInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Hauptfarbe Modus</span>
+              <span class="help-dot" title="Solid Color oder Farbverlauf für Akzente und Rahmen.">?</span>
+            </span>
+            <select id="accentColorModeInput">
+              <option value="solid">Solid Color</option>
+              <option value="gradient">Farbverlauf</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Hauptfarbe Verlauf</span>
+              <span class="help-dot" title="Verlaufsvorlage oder eigene zwei Farben.">?</span>
+            </span>
+            <select id="accentGradientPresetInput">
+              <option value="custom">Eigener Verlauf</option>
+              <option value="sunset">Sunset</option>
+              <option value="ocean">Ocean</option>
+              <option value="neon">Neon</option>
+              <option value="sports">Sports</option>
+              <option value="gold">Gold</option>
+              <option value="ice">Ice</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Verlauf Farbe 1</span>
+              <span class="help-dot" title="Startfarbe für den eigenen Hauptfarben-Verlauf.">?</span>
+            </span>
+            <input id="accentGradientFromInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Verlauf Farbe 2</span>
+              <span class="help-dot" title="Endfarbe für den eigenen Hauptfarben-Verlauf.">?</span>
+            </span>
+            <input id="accentGradientToInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Hauptfarbe Transparenz</span>
+              <span class="help-dot" title="Deckkraft der Hauptfarbe in Prozent. Wirkt auf Akzente, Rahmen und Icon-Hintergrund.">?</span>
+            </span>
+            <input id="accentAlphaInput" type="range" min="10" max="100" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textfarbe</span>
+              <span class="help-dot" title="Textfarbe für alle sichtbaren Zeilen.">?</span>
+            </span>
+            <input id="textColorInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textfarbe Modus</span>
+              <span class="help-dot" title="Solid Color oder Farbverlauf für Plattform, Titel und Unterzeile.">?</span>
+            </span>
+            <select id="textColorModeInput">
+              <option value="solid">Solid Color</option>
+              <option value="gradient">Farbverlauf</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textverlauf</span>
+              <span class="help-dot" title="Verlaufsvorlage oder eigene zwei Farben für den Text.">?</span>
+            </span>
+            <select id="textGradientPresetInput">
+              <option value="custom">Eigener Verlauf</option>
+              <option value="sunset">Sunset</option>
+              <option value="ocean">Ocean</option>
+              <option value="neon">Neon</option>
+              <option value="sports">Sports</option>
+              <option value="gold">Gold</option>
+              <option value="ice">Ice</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textverlauf Farbe 1</span>
+              <span class="help-dot" title="Startfarbe für den eigenen Textverlauf.">?</span>
+            </span>
+            <input id="textGradientFromInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textverlauf Farbe 2</span>
+              <span class="help-dot" title="Endfarbe für den eigenen Textverlauf.">?</span>
+            </span>
+            <input id="textGradientToInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Transparenz</span>
+              <span class="help-dot" title="Deckkraft der Bannerfläche in Prozent. Text, Logo und Rahmen bleiben bewusst klarer lesbar.">?</span>
+            </span>
+            <input id="surfaceAlphaInput" type="range" min="10" max="100" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Schatten</span>
+              <span class="help-dot" title="Blendet einen Schatten erst nach Abschluss der Einblendanimation ein.">?</span>
+            </span>
+            <input class="inline-toggle" id="shadowEnabledInput" type="checkbox">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Schattenstärke</span>
+              <span class="help-dot" title="Deckkraft des nachträglich eingeblendeten Schattens.">?</span>
+            </span>
+            <input id="shadowAlphaInput" type="range" min="0" max="90" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Schattenweichheit</span>
+              <span class="help-dot" title="Weichheit und Größe des Schattens in Pixeln.">?</span>
+            </span>
+            <input id="shadowBlurInput" type="range" min="8" max="80" step="1">
+          </label>
+        </div>
+      </div>
+
+      <div class="editor-section">
+        <div class="section-title">
+          <h3>Typografie</h3>
+          <button class="button tiny" data-reset-section="typography" type="button">Standard</button>
+        </div>
+        <div class="font-preview" id="fontPreview">Folge uns live</div>
+        <div class="section-grid">
+          <label>
+            <span class="field-head">
+              <span>Schriftart</span>
+              <span class="help-dot" title="Schriftart für diesen Banner. Online-Schriften werden über Google Fonts geladen, wenn Internet verfügbar ist.">?</span>
+            </span>
+            <select id="fontFamilyInput">
+              <option value="Inter">Inter</option>
+              <option value="Anton">Anton</option>
+              <option value="Archivo Black">Archivo Black</option>
+              <option value="Barlow Condensed">Barlow Condensed</option>
+              <option value="Black Ops One">Black Ops One</option>
+              <option value="Roboto Condensed">Roboto Condensed</option>
+              <option value="DM Sans">DM Sans</option>
+              <option value="Exo 2">Exo 2</option>
+              <option value="Kanit">Kanit</option>
+              <option value="Lato">Lato</option>
+              <option value="Manrope">Manrope</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Noto Sans">Noto Sans</option>
+              <option value="Oswald">Oswald</option>
+              <option value="Outfit">Outfit</option>
+              <option value="Bebas Neue">Bebas Neue</option>
+              <option value="Poppins">Poppins</option>
+              <option value="Playfair Display">Playfair Display</option>
+              <option value="Rajdhani">Rajdhani</option>
+              <option value="Raleway">Raleway</option>
+              <option value="Rubik">Rubik</option>
+              <option value="Sora">Sora</option>
+              <option value="Space Grotesk">Space Grotesk</option>
+              <option value="Titillium Web">Titillium Web</option>
+              <option value="Ubuntu">Ubuntu</option>
+              <option value="Work Sans">Work Sans</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Fontgröße</span>
+              <span class="help-dot" title="Größe der Hauptzeile in Pixeln. Unterzeile und Handle skalieren proportional mit.">?</span>
+            </span>
+            <input id="fontSizeInput" type="range" min="22" max="64" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Schriftschnitt</span>
+              <span class="help-dot" title="Gewichtung der Schrift, von normal bis sehr fett.">?</span>
+            </span>
+            <select id="fontWeightInput">
+              <option value="400">Normal</option>
+              <option value="600">Halbfett</option>
+              <option value="700">Fett</option>
+              <option value="800">Extra Fett</option>
+              <option value="900">Black</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Zeichenabstand</span>
+              <span class="help-dot" title="Abstand zwischen den Buchstaben in Pixeln.">?</span>
+            </span>
+            <input id="letterSpacingInput" type="range" min="0" max="6" step="0.5">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Groß-/Kleinschreibung</span>
+              <span class="help-dot" title="Optionaler Textstil für die sichtbaren Zeilen.">?</span>
+            </span>
+            <select id="textTransformInput">
+              <option value="none">Original</option>
+              <option value="uppercase">Großbuchstaben</option>
+              <option value="lowercase">Kleinbuchstaben</option>
+              <option value="capitalize">Wortanfänge groß</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Farbe</span>
+              <span class="help-dot" title="Separate Farbe für Kanalname, URL oder Handle.">?</span>
+            </span>
+            <input id="handleColorInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Farbmodus</span>
+              <span class="help-dot" title="Solid Color oder Farbverlauf nur für Handle / URL.">?</span>
+            </span>
+            <select id="handleColorModeInput">
+              <option value="solid">Solid Color</option>
+              <option value="gradient">Farbverlauf</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Verlauf</span>
+              <span class="help-dot" title="Verlaufsvorlage oder eigene zwei Farben für Handle / URL.">?</span>
+            </span>
+            <select id="handleGradientPresetInput">
+              <option value="custom">Eigener Verlauf</option>
+              <option value="sunset">Sunset</option>
+              <option value="ocean">Ocean</option>
+              <option value="neon">Neon</option>
+              <option value="sports">Sports</option>
+              <option value="gold">Gold</option>
+              <option value="ice">Ice</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Verlauf 1</span>
+              <span class="help-dot" title="Startfarbe für den eigenen Handle-Verlauf.">?</span>
+            </span>
+            <input id="handleGradientFromInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Verlauf 2</span>
+              <span class="help-dot" title="Endfarbe für den eigenen Handle-Verlauf.">?</span>
+            </span>
+            <input id="handleGradientToInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Fontgröße</span>
+              <span class="help-dot" title="Schriftgröße nur für Kanalname, URL oder Handle.">?</span>
+            </span>
+            <input id="handleFontSizeInput" type="range" min="12" max="42" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Schriftschnitt</span>
+              <span class="help-dot" title="Schriftgewicht nur für Handle / URL.">?</span>
+            </span>
+            <select id="handleFontWeightInput">
+              <option value="400">Normal</option>
+              <option value="600">Halbfett</option>
+              <option value="700">Fett</option>
+              <option value="800">Extra Fett</option>
+              <option value="900">Black</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Handle Zeichenabstand</span>
+              <span class="help-dot" title="Buchstabenabstand nur für Handle / URL.">?</span>
+            </span>
+            <input id="handleLetterSpacingInput" type="range" min="0" max="6" step="0.5">
+          </label>
+        </div>
+      </div>
+
+      <div class="editor-section">
+        <div class="section-title">
+          <h3>Rahmen</h3>
+          <button class="button tiny" data-reset-section="border" type="button">Standard</button>
+        </div>
+        <div class="section-grid">
+          <label>
+            <span class="field-head">
+              <span>Rahmentyp</span>
+              <span class="help-dot" title="Optik des Rahmens: klassisch, gestrichelt, gepunktet, doppelt oder leuchtend.">?</span>
+            </span>
+            <select id="borderStyleInput">
+              <option value="none">Kein Rahmen</option>
+              <option value="solid">Durchgezogen</option>
+              <option value="dashed">Gestrichelt</option>
+              <option value="dotted">Gepunktet</option>
+              <option value="double">Doppelt</option>
+              <option value="glow">Leuchten</option>
+            </select>
+          </label>
+          <label data-border-control>
+            <span class="field-head">
+              <span>Rahmendicke</span>
+              <span class="help-dot" title="Dicke des zusätzlichen Rahmens in Pixeln.">?</span>
+            </span>
+            <input id="borderWidthInput" type="number" min="0" max="18" step="1">
+          </label>
+          <label data-border-control>
+            <span class="field-head">
+              <span>Rahmenanimation</span>
+              <span class="help-dot" title="Animiert nur den Rahmen, unabhängig von der Banner-Animation.">?</span>
+            </span>
+            <select id="borderAnimationInput">
+              <option value="none">Keine</option>
+              <option value="pulse">Puls</option>
+              <option value="march">Laufende Striche</option>
+              <option value="sweep">Lichtlauf</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="editor-section">
+        <div class="section-title">
+          <h3>Timing</h3>
+          <button class="button tiny" data-reset-section="timing" type="button">Standard</button>
+        </div>
+        <div class="section-grid">
+          <label>
+            <span class="field-head">
+              <span>Sichtbar</span>
+              <span class="help-dot" title="Anzeigedauer dieses Banners in Sekunden.">?</span>
+            </span>
+            <input id="durationInput" type="number" min="2" max="30" step="1">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Trigger-ID</span>
+              <span class="help-dot" title="Interne ID für sofortiges manuelles Triggern. Dieser Lower Third kann über den Trigger-Link direkt aufgerufen werden.">?</span>
+            </span>
+            <input id="triggerIdInput" type="text" readonly>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Trigger-Link</span>
+              <span class="help-dot" title="Öffnet den Player mit genau diesem Lower Third sofort. Gewichtung 0 ist ideal für reine Trigger-Banner.">?</span>
+            </span>
+            <input id="triggerLinkInput" type="text" readonly>
+          </label>
+          <button class="button" id="copyTriggerLinkButton" type="button">Trigger-Link kopieren</button>
+          <label>
+            <span class="field-head">
+              <span>Gewichtung</span>
+              <span class="help-dot" title="Höhere Werte lassen diesen Banner häufiger in der Zufallsschleife erscheinen. 0 deaktiviert das automatische Timing für diesen Banner; er bleibt nur per Trigger-ID/Trigger-Link abrufbar.">?</span>
+            </span>
+            <input id="weightInput" type="number" min="0" max="10" step="1">
+          </label>
+          <div class="range-pair">
+            <span class="field-head">
+              <span>Zufällige Pause</span>
+              <span class="help-dot" title="Minimale und maximale Pause zwischen zwei Bannern in Sekunden.">?</span>
+            </span>
+            <div class="range-pair-values">
+              <span>Min. <strong id="minDelayValue">8s</strong></span>
+              <span>Max. <strong id="maxDelayValue">22s</strong></span>
+            </div>
+            <div class="dual-range">
+              <input id="minDelayInput" type="range" min="1" max="300" step="1">
+              <input id="maxDelayInput" type="range" min="1" max="300" step="1">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel preview-panel" aria-label="Vorschau">
+      <div class="panel-head">
+        <h2>Vorschau</h2>
+        <button class="button" id="previewButton">Animation testen</button>
+      </div>
+      <div class="preview-stage" id="previewStage">
+        <div class="safe-frame"></div>
+      </div>
+      <div class="share-row">
+        <label>
+          <span class="field-head">
+            <span>Eigenständiger Player-Link</span>
+            <span class="help-dot" title="Dieser Link enthält die aktuelle Konfiguration und eignet sich für Browser-Quellen in Streaming-Software.">?</span>
+          </span>
+          <input id="playerLinkInput" type="text" readonly>
+        </label>
+        <button class="button" id="copyLinkButton">Kopieren</button>
+      </div>
+      <div class="player-help">
+        <p>Für Streaming-Software: den Player-Link als Browser-Quelle nutzen. Alternativ <strong>player.html</strong> im selben Browser öffnen.</p>
+      </div>
+    </section>
+  </main>
+
+  <main class="license-view app-view" id="licenseView" hidden>
+    <section class="panel license-panel">
+      <div class="license-hero">
+        <a href="https://github.com/bruunooh" target="_blank" rel="noreferrer" aria-label="bruunooh auf GitHub">
+          <img src="assets/bruunooh-logo-transparent.png" alt="bruunooh Logo">
+        </a>
+        <div>
+          <h2>Copyright & Lizenz</h2>
+          <p>Lower Third Studio by <a href="https://github.com/bruunooh" target="_blank" rel="noreferrer">bruunooh</a></p>
+        </div>
+      </div>
+
+      <div class="license-grid">
+        <article>
+          <h3>Copyright</h3>
+          <p>Copyright © 2026 bruunooh. Alle Rechte vorbehalten, soweit nicht durch die unten genannte Lizenz eingeräumt.</p>
+        </article>
+        <article>
+          <h3>Creative Commons Non-Commercial</h3>
+          <p>Diese Anwendung ist für nicht-kommerzielle Nutzung unter einer Creative-Commons-Non-Commercial-Lizenz vorgesehen.</p>
+          <p>Empfohlene Lizenzangabe: <strong>CC BY-NC 4.0</strong> - Namensnennung, nicht kommerziell.</p>
+          <a class="button ghost" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noreferrer">Lizenz ansehen</a>
+        </article>
+        <article>
+          <h3>Hinweis</h3>
+          <p>Plattformlogos und Markenzeichen gehören den jeweiligen Rechteinhabern. Sie werden nur zur Identifikation der Plattformen verwendet.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <template id="thirdTemplate">
+    <article class="third-item">
+      <button class="third-select" type="button">
+        <span class="third-item-title"></span>
+        <span class="third-item-meta"></span>
+        <span class="third-item-id"></span>
+      </button>
+      <div class="third-item-actions">
+        <label class="switch-control" title="Automatisch abspielen oder nur manuell per Webhook triggern">
+          <input class="third-auto-toggle" type="checkbox">
+          <span></span>
+        </label>
+        <button class="button tiny third-copy-trigger" type="button">Webhook URL kopieren</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
