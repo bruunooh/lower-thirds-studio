@@ -65,7 +65,7 @@ Copyright © 2026 bruunooh.
 
 Die Anwendung ist für nicht-kommerzielle Nutzung unter einer Creative-Commons-Non-Commercial-Lizenz vorgesehen.
 
-Empfohlene Lizenzangabe:
+Lizenzangabe:
 
 ```text
 CC BY-NC 4.0 – Namensnennung, nicht kommerziell
