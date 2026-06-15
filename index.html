@@ -26,7 +26,10 @@
         <button class="tab-button" id="licenseTabButton" type="button" role="tab" aria-selected="false" aria-controls="licenseView">Lizenz</button>
       </div>
       <button class="button ghost" id="topCopyLinkButton">Player URL kopieren</button>
+      <button class="button ghost" id="loadConfigButton" type="button">Konfiguration laden</button>
+      <button class="button danger" id="resetConfigButton" type="button">Konfiguration zurücksetzen</button>
       <button class="button primary" id="saveButton">Speichern</button>
+      <input id="loadConfigInput" type="file" accept="application/json,.json" hidden>
     </div>
   </header>
 
@@ -61,9 +64,9 @@
           </label>
           <label>
             <span class="field-head">
-              <span>Unterzeile</span>
+              <span>Untertitel 1</span>
               <span class="help-dot" title="Optionale zweite Zeile für Beschreibung, Claim oder Hinweis. Leerer Inhalt wird automatisch nicht angezeigt.">?</span>
-              <input class="inline-toggle" id="showSubtitleInput" type="checkbox" title="Unterzeile anzeigen">
+              <input class="inline-toggle" id="showSubtitleInput" type="checkbox" title="Untertitel 1 anzeigen">
             </span>
             <input id="subtitleInput" type="text" maxlength="70">
           </label>
@@ -84,9 +87,9 @@
           </label>
           <label>
             <span class="field-head">
-              <span>Handle / URL</span>
-              <span class="help-dot" title="Accountname, Kurzlink oder URL. Der Schalter blendet nur die Zeile aus, nicht die gespeicherte Eingabe.">?</span>
-              <input class="inline-toggle" id="showHandleInput" type="checkbox" title="Handle / URL anzeigen">
+              <span>Untertitel 2 / Handle / URL</span>
+              <span class="help-dot" title="Dritte Textzeile für zweiten Untertitel, Accountname, Kurzlink oder URL. Der Schalter blendet nur die Zeile aus, nicht die gespeicherte Eingabe.">?</span>
+              <input class="inline-toggle" id="showHandleInput" type="checkbox" title="Untertitel 2 / Handle / URL anzeigen">
             </span>
             <input id="handleInput" type="text" maxlength="48">
           </label>
@@ -121,6 +124,13 @@
               <option value="studio">Studio Live</option>
               <option value="kinetic">Kinetic</option>
               <option value="glassline">Glassline</option>
+              <option value="prism">Prism</option>
+              <option value="neonbar">Neon Bar</option>
+              <option value="editorial">Editorial</option>
+              <option value="aurora">Aurora</option>
+              <option value="circuit">Circuit</option>
+              <option value="livecard">Live Card</option>
+              <option value="cyberneon">Cyber Neon Frame</option>
             </select>
           </label>
           <label>
@@ -142,18 +152,26 @@
               <option value="streak">Streak</option>
               <option value="rotate">Rotate</option>
               <option value="neon">Neon Pulse</option>
+              <option value="glitch">Glitch Cut</option>
+              <option value="fold">Fold</option>
+              <option value="skate">Skate</option>
+              <option value="signal">Signal</option>
+              <option value="orbit">Orbit</option>
+              <option value="curtain">Curtain</option>
             </select>
           </label>
           <label>
             <span class="field-head">
-              <span>Position</span>
-              <span class="help-dot" title="Position des Banners im Player und in der Vorschau.">?</span>
+              <span>Design-Bewegung</span>
+              <span class="help-dot" title="Schaltet dezente Daueranimationen des gewählten Designs ein oder aus. Die Ein- und Ausblendanimation bleibt davon unabhängig.">?</span>
             </span>
-            <select id="positionInput">
-              <option value="left">Links unten</option>
-              <option value="center">Mitte unten</option>
-              <option value="right">Rechts unten</option>
-            </select>
+            <span class="switch-row">
+              <span>Daueranimationen aktivieren</span>
+              <span class="switch-control">
+                <input id="styleMotionEnabledInput" type="checkbox">
+                <span></span>
+              </span>
+            </span>
           </label>
           <label>
             <span class="field-head">
@@ -193,10 +211,10 @@
           <label>
             <span class="field-head">
               <span>Icon-Hintergrund Modus</span>
-              <span class="help-dot" title="Solid Color oder Farbverlauf für das Feld hinter dem Symbol.">?</span>
+              <span class="help-dot" title="Einfarbig oder Farbverlauf für das Feld hinter dem Symbol.">?</span>
             </span>
             <select id="iconBgColorModeInput">
-              <option value="solid">Solid Color</option>
+              <option value="solid">Einfarbig</option>
               <option value="gradient">Farbverlauf</option>
             </select>
           </label>
@@ -260,10 +278,10 @@
           <label>
             <span class="field-head">
               <span>Hauptfarbe Modus</span>
-              <span class="help-dot" title="Solid Color oder Farbverlauf für Akzente und Rahmen.">?</span>
+              <span class="help-dot" title="Einfarbig oder Farbverlauf für Akzente und Rahmen.">?</span>
             </span>
             <select id="accentColorModeInput">
-              <option value="solid">Solid Color</option>
+              <option value="solid">Einfarbig</option>
               <option value="gradient">Farbverlauf</option>
             </select>
           </label>
@@ -305,52 +323,6 @@
           </label>
           <label>
             <span class="field-head">
-              <span>Textfarbe</span>
-              <span class="help-dot" title="Textfarbe für alle sichtbaren Zeilen.">?</span>
-            </span>
-            <input id="textColorInput" type="color">
-          </label>
-          <label>
-            <span class="field-head">
-              <span>Textfarbe Modus</span>
-              <span class="help-dot" title="Solid Color oder Farbverlauf für Plattform, Titel und Unterzeile.">?</span>
-            </span>
-            <select id="textColorModeInput">
-              <option value="solid">Solid Color</option>
-              <option value="gradient">Farbverlauf</option>
-            </select>
-          </label>
-          <label>
-            <span class="field-head">
-              <span>Textverlauf</span>
-              <span class="help-dot" title="Verlaufsvorlage oder eigene zwei Farben für den Text.">?</span>
-            </span>
-            <select id="textGradientPresetInput">
-              <option value="custom">Eigener Verlauf</option>
-              <option value="sunset">Sunset</option>
-              <option value="ocean">Ocean</option>
-              <option value="neon">Neon</option>
-              <option value="sports">Sports</option>
-              <option value="gold">Gold</option>
-              <option value="ice">Ice</option>
-            </select>
-          </label>
-          <label>
-            <span class="field-head">
-              <span>Textverlauf Farbe 1</span>
-              <span class="help-dot" title="Startfarbe für den eigenen Textverlauf.">?</span>
-            </span>
-            <input id="textGradientFromInput" type="color">
-          </label>
-          <label>
-            <span class="field-head">
-              <span>Textverlauf Farbe 2</span>
-              <span class="help-dot" title="Endfarbe für den eigenen Textverlauf.">?</span>
-            </span>
-            <input id="textGradientToInput" type="color">
-          </label>
-          <label>
-            <span class="field-head">
               <span>Transparenz</span>
               <span class="help-dot" title="Deckkraft der Bannerfläche in Prozent. Text, Logo und Rahmen bleiben bewusst klarer lesbar.">?</span>
             </span>
@@ -387,6 +359,10 @@
         </div>
         <div class="font-preview" id="fontPreview">Folge uns live</div>
         <div class="section-grid">
+          <div class="section-subhead">
+            <strong>Schriftfamilie</strong>
+            <span>Wähle zuerst die Grundschrift. Die Vorschau darüber zeigt direkt den aktuellen Titel.</span>
+          </div>
           <label>
             <span class="field-head">
               <span>Schriftart</span>
@@ -421,10 +397,60 @@
               <option value="Work Sans">Work Sans</option>
             </select>
           </label>
+          <div class="section-subhead">
+            <strong>Titel, Plattform & Untertitel 1</strong>
+            <span>Diese Einstellungen steuern die Haupttexte gemeinsam. Leere Zeilen bleiben weiterhin automatisch ausgeblendet.</span>
+          </div>
           <label>
             <span class="field-head">
-              <span>Fontgröße</span>
-              <span class="help-dot" title="Größe der Hauptzeile in Pixeln. Unterzeile und Handle skalieren proportional mit.">?</span>
+              <span>Textfarbe</span>
+              <span class="help-dot" title="Textfarbe für Plattform, Titel und Untertitel 1. Untertitel 2 / Handle / URL hat darunter eigene Einstellungen.">?</span>
+            </span>
+            <input id="textColorInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Farbmodus</span>
+              <span class="help-dot" title="Einfarbig oder Farbverlauf für Plattform, Titel und Untertitel 1.">?</span>
+            </span>
+            <select id="textColorModeInput">
+              <option value="solid">Einfarbig</option>
+              <option value="gradient">Farbverlauf</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textverlauf</span>
+              <span class="help-dot" title="Verlaufsvorlage oder eigene zwei Farben für Plattform, Titel und Untertitel 1.">?</span>
+            </span>
+            <select id="textGradientPresetInput">
+              <option value="custom">Eigener Verlauf</option>
+              <option value="sunset">Sunset</option>
+              <option value="ocean">Ocean</option>
+              <option value="neon">Neon</option>
+              <option value="sports">Sports</option>
+              <option value="gold">Gold</option>
+              <option value="ice">Ice</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textverlauf 1</span>
+              <span class="help-dot" title="Startfarbe für den eigenen Textverlauf.">?</span>
+            </span>
+            <input id="textGradientFromInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Textverlauf 2</span>
+              <span class="help-dot" title="Endfarbe für den eigenen Textverlauf.">?</span>
+            </span>
+            <input id="textGradientToInput" type="color">
+          </label>
+          <label>
+            <span class="field-head">
+              <span>Titelgröße</span>
+              <span class="help-dot" title="Größe der Hauptzeile in Pixeln. Plattform und Unterzeile bleiben proportional passend.">?</span>
             </span>
             <input id="fontSizeInput" type="range" min="22" max="64" step="1">
           </label>
@@ -460,26 +486,30 @@
               <option value="capitalize">Wortanfänge groß</option>
             </select>
           </label>
+          <div class="section-subhead">
+            <strong>Untertitel 2 / Handle / URL</strong>
+            <span>Die dritte Zeile kann bewusst anders aussehen als der übrige Text.</span>
+          </div>
           <label>
             <span class="field-head">
-              <span>Handle Farbe</span>
+              <span>Handle-Farbe</span>
               <span class="help-dot" title="Separate Farbe für Kanalname, URL oder Handle.">?</span>
             </span>
             <input id="handleColorInput" type="color">
           </label>
           <label>
             <span class="field-head">
-              <span>Handle Farbmodus</span>
-              <span class="help-dot" title="Solid Color oder Farbverlauf nur für Handle / URL.">?</span>
+              <span>Handle-Farbmodus</span>
+              <span class="help-dot" title="Einfarbig oder Farbverlauf nur für Handle / URL.">?</span>
             </span>
             <select id="handleColorModeInput">
-              <option value="solid">Solid Color</option>
+              <option value="solid">Einfarbig</option>
               <option value="gradient">Farbverlauf</option>
             </select>
           </label>
           <label>
             <span class="field-head">
-              <span>Handle Verlauf</span>
+              <span>Handle-Verlauf</span>
               <span class="help-dot" title="Verlaufsvorlage oder eigene zwei Farben für Handle / URL.">?</span>
             </span>
             <select id="handleGradientPresetInput">
@@ -494,28 +524,28 @@
           </label>
           <label>
             <span class="field-head">
-              <span>Handle Verlauf 1</span>
+              <span>Handle-Verlauf 1</span>
               <span class="help-dot" title="Startfarbe für den eigenen Handle-Verlauf.">?</span>
             </span>
             <input id="handleGradientFromInput" type="color">
           </label>
           <label>
             <span class="field-head">
-              <span>Handle Verlauf 2</span>
+              <span>Handle-Verlauf 2</span>
               <span class="help-dot" title="Endfarbe für den eigenen Handle-Verlauf.">?</span>
             </span>
             <input id="handleGradientToInput" type="color">
           </label>
           <label>
             <span class="field-head">
-              <span>Handle Fontgröße</span>
+              <span>Handle-Größe</span>
               <span class="help-dot" title="Schriftgröße nur für Kanalname, URL oder Handle.">?</span>
             </span>
             <input id="handleFontSizeInput" type="range" min="12" max="42" step="1">
           </label>
           <label>
             <span class="field-head">
-              <span>Handle Schriftschnitt</span>
+              <span>Handle-Schnitt</span>
               <span class="help-dot" title="Schriftgewicht nur für Handle / URL.">?</span>
             </span>
             <select id="handleFontWeightInput">
@@ -528,7 +558,7 @@
           </label>
           <label>
             <span class="field-head">
-              <span>Handle Zeichenabstand</span>
+              <span>Handle-Zeichenabstand</span>
               <span class="help-dot" title="Buchstabenabstand nur für Handle / URL.">?</span>
             </span>
             <input id="handleLetterSpacingInput" type="range" min="0" max="6" step="0.5">
@@ -591,25 +621,38 @@
             </span>
             <input id="durationInput" type="number" min="2" max="30" step="1">
           </label>
-          <label>
+          <label class="switch-field">
+            <span class="field-head">
+              <span>Webhook</span>
+              <span class="help-dot" title="Aktiviert Trigger-ID und Trigger-Link für diesen Lower Third. Wenn deaktiviert, kann er nicht per Webhook ausgelöst werden.">?</span>
+            </span>
+            <span class="switch-row">
+              <span>Webhook-Trigger erlauben</span>
+              <span class="switch-control">
+                <input id="webhookEnabledInput" type="checkbox">
+                <span></span>
+              </span>
+            </span>
+          </label>
+          <label data-webhook-control>
             <span class="field-head">
               <span>Trigger-ID</span>
               <span class="help-dot" title="Interne ID für sofortiges manuelles Triggern. Dieser Lower Third kann über den Trigger-Link direkt aufgerufen werden.">?</span>
             </span>
             <input id="triggerIdInput" type="text" readonly>
           </label>
-          <label>
+          <label data-webhook-control>
             <span class="field-head">
               <span>Trigger-Link</span>
               <span class="help-dot" title="Öffnet den Player mit genau diesem Lower Third sofort. Gewichtung 0 ist ideal für reine Trigger-Banner.">?</span>
             </span>
             <input id="triggerLinkInput" type="text" readonly>
           </label>
-          <button class="button" id="copyTriggerLinkButton" type="button">Trigger-Link kopieren</button>
+          <button class="button" id="copyTriggerLinkButton" type="button" data-webhook-control>Trigger-Link kopieren</button>
           <label>
             <span class="field-head">
               <span>Gewichtung</span>
-              <span class="help-dot" title="Höhere Werte lassen diesen Banner häufiger in der Zufallsschleife erscheinen. 0 deaktiviert das automatische Timing für diesen Banner; er bleibt nur per Trigger-ID/Trigger-Link abrufbar.">?</span>
+              <span class="help-dot" title="Höhere Werte lassen diesen Banner häufiger in der Zufallsschleife erscheinen. 0 deaktiviert das automatische Timing; mit aktivem Webhook bleibt er manuell per Trigger-Link abrufbar.">?</span>
             </span>
             <input id="weightInput" type="number" min="0" max="10" step="1">
           </label>
@@ -639,6 +682,7 @@
       <div class="preview-stage" id="previewStage">
         <div class="safe-frame"></div>
       </div>
+      <div class="preview-size" id="previewSizeOutput">Lower Third: - x - px</div>
       <div class="share-row">
         <label>
           <span class="field-head">
@@ -694,7 +738,7 @@
         <span class="third-item-id"></span>
       </button>
       <div class="third-item-actions">
-        <label class="switch-control" title="Automatisch abspielen oder nur manuell per Webhook triggern">
+        <label class="switch-control" title="Automatisch in der Zufallsschleife abspielen oder aus der Schleife nehmen">
           <input class="third-auto-toggle" type="checkbox">
           <span></span>
         </label>

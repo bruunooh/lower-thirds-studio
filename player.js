@@ -10,6 +10,7 @@ const fallbackState = {
       handle: "@deinname",
       style: "glass",
       animation: "slide",
+      styleMotionEnabled: true,
       position: "left",
       icon: "platform",
       customIcon: "",
@@ -57,6 +58,7 @@ const fallbackState = {
       handleFontWeight: 800,
       handleLetterSpacing: 0,
       duration: 7,
+      webhookEnabled: true,
       weight: 3
     }
   ]
@@ -108,6 +110,9 @@ const gradientPresets = {
   gold: ["#f8e08e", "#b7791f"],
   ice: ["#e0f7ff", "#69d2ff"]
 };
+
+const canvasStyles = new Set(["prism", "neonbar", "editorial", "aurora", "circuit", "livecard"]);
+const motionLayerStyles = new Set(["solid", "glass", "stripe", "compact", "sports", "scoreboard", "ticker", "broadcast", "slab", "chrome", "holo", "ribbon", "esports", "studio", "kinetic", "glassline", "neonbar", "livecard"]);
 
 const stage = document.querySelector("#playerStage");
 let state = readState();
@@ -176,12 +181,12 @@ function pickThird() {
 }
 
 function findThirdById(id) {
-  return state.thirds.find((third) => third.id === id);
+  return state.thirds.find((third) => third.id === id && third.webhookEnabled !== false);
 }
 
 function createLowerThird(third) {
   const node = document.createElement("article");
-  node.className = `lower-third style-${third.style} anim-${third.animation} pos-${third.position} border-${third.borderStyle || "none"} frame-${third.borderAnimation || "none"} ${third.textColorMode === "gradient" ? "text-gradient" : ""} ${third.handleColorMode === "gradient" ? "handle-gradient" : ""} ${third.shadowEnabled !== false ? "shadow-after-in" : ""}`;
+  node.className = `lower-third style-${third.style} anim-${third.animation} border-${third.borderStyle || "none"} frame-${third.borderAnimation || "none"} ${third.styleMotionEnabled === false ? "style-motion-off" : "style-motion-on"} ${third.textColorMode === "gradient" ? "text-gradient" : ""} ${third.handleColorMode === "gradient" ? "handle-gradient" : ""} ${third.shadowEnabled !== false ? "shadow-after-in" : ""}`;
   const accentRgb = hexToRgb(third.accent || "#35c6a6");
   const accentAlpha = clamp(Number(third.accentAlpha ?? 100), 10, 100) / 100;
   node.style.setProperty("--accent", buildPaint(third, "accent", accentAlpha));
@@ -205,8 +210,199 @@ function createLowerThird(third) {
   node.style.setProperty("--handle-letter-spacing", `${clamp(Number(third.handleLetterSpacing ?? 0), 0, 6)}px`);
   node.style.setProperty("--icon-bg", buildPaint(third, "iconBg", clamp(Number(third.iconBgAlpha ?? 100), 0, 100) / 100));
   node.style.setProperty("--icon-scale", `${clamp(Number(third.iconScale ?? 76), 40, 115)}%`);
+  const canvas = third.styleMotionEnabled === false ? null : createDynamicCanvas(third);
+  if (canvas) node.append(canvas);
+  if (third.styleMotionEnabled !== false && motionLayerStyles.has(third.style)) node.append(createStyleMotionLayer());
+  if (third.style === "cyberneon" && third.styleMotionEnabled !== false) node.append(createNeonRunner(third));
   node.append(createIcon(third), createCopy(third));
   return node;
+}
+
+function createStyleMotionLayer() {
+  const layer = document.createElement("div");
+  layer.className = "lt-style-motion-layer";
+  layer.setAttribute("aria-hidden", "true");
+  return layer;
+}
+
+function createNeonRunner(third) {
+  const runner = document.createElement("div");
+  runner.className = "lt-neon-runner";
+  runner.setAttribute("aria-hidden", "true");
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.classList.add("lt-neon-svg");
+  svg.setAttribute("viewBox", "0 0 1000 180");
+  svg.setAttribute("preserveAspectRatio", "none");
+  const pathData = "M50 32 L170 7 L830 7 L950 32 L1000 158 L985 180 L15 180 L0 158 Z";
+  ["lt-neon-glow", "lt-neon-trace"].forEach((className) => {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.classList.add(className);
+    path.setAttribute("d", pathData);
+    path.setAttribute("pathLength", "1000");
+    svg.append(path);
+  });
+  runner.append(svg);
+  return runner;
+}
+
+function createDynamicCanvas(third) {
+  if (!canvasStyles.has(third.style)) return null;
+  const canvas = document.createElement("canvas");
+  canvas.className = "lt-canvas";
+  canvas.setAttribute("aria-hidden", "true");
+  const accent = hexToRgb(third.accent || "#35c6a6");
+  const gold = hexToRgb("#f5bf54");
+  let start = null;
+
+  function fit() {
+    const parent = canvas.parentElement;
+    if (!parent) return { width: 0, height: 0, dpr: 1 };
+    const rect = parent.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const width = Math.max(1, Math.floor(rect.width));
+    const height = Math.max(1, Math.floor(rect.height));
+    if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+    }
+    return { width, height, dpr };
+  }
+
+  function draw(timestamp) {
+    if (!canvas.isConnected) return;
+    if (start === null) start = timestamp;
+    const t = (timestamp - start) / 1000;
+    const { width, height, dpr } = fit();
+    const ctx = canvas.getContext("2d");
+    if (!ctx || !width || !height) {
+      requestAnimationFrame(draw);
+      return;
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawCanvasStyle(ctx, third.style, width, height, t, accent, gold);
+    requestAnimationFrame(draw);
+  }
+
+  requestAnimationFrame(draw);
+  return canvas;
+}
+
+function drawCanvasStyle(ctx, style, width, height, t, accent, gold) {
+  ctx.clearRect(0, 0, width, height);
+  const bg = ctx.createLinearGradient(0, 0, width, height);
+  bg.addColorStop(0, "rgba(5, 7, 11, .92)");
+  bg.addColorStop(1, "rgba(18, 22, 30, .88)");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  if (style === "prism") drawPrism(ctx, width, height, t, accent, gold);
+  if (style === "neonbar") drawNeonBar(ctx, width, height, t, accent);
+  if (style === "editorial") drawEditorial(ctx, width, height, t, accent);
+  if (style === "aurora") drawAurora(ctx, width, height, t, accent, gold);
+  if (style === "circuit") drawCircuit(ctx, width, height, t, accent);
+  if (style === "livecard") drawLiveCard(ctx, width, height, t, accent);
+}
+
+function rgba(rgb, alpha) {
+  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+}
+
+function drawPrism(ctx, width, height, t, accent, gold) {
+  for (let i = -2; i < 6; i += 1) {
+    const x = ((t * 80 + i * 150) % (width + 260)) - 180;
+    const grad = ctx.createLinearGradient(x, 0, x + 180, height);
+    grad.addColorStop(0, "rgba(255,255,255,0)");
+    grad.addColorStop(.45, rgba(i % 2 ? accent : gold, .22));
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x + 96, 0);
+    ctx.lineTo(x + 210, height);
+    ctx.lineTo(x + 88, height);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function drawNeonBar(ctx, width, height, t, accent) {
+  ctx.fillStyle = rgba(accent, .16);
+  for (let i = 0; i < 18; i += 1) {
+    const x = (i / 17) * width;
+    const amp = (Math.sin(t * 3 + i * .7) + 1) * .5;
+    ctx.fillRect(x, height - 8 - amp * height * .46, 4, amp * height * .46 + 8);
+  }
+  const sweep = (t * 130) % (width + 160) - 80;
+  const grad = ctx.createLinearGradient(sweep - 70, 0, sweep + 70, 0);
+  grad.addColorStop(0, "rgba(255,255,255,0)");
+  grad.addColorStop(.5, rgba(accent, .42));
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(sweep - 70, 0, 140, height);
+}
+
+function drawEditorial(ctx, width, height, t, accent) {
+  ctx.fillStyle = "rgba(245,247,250,.92)";
+  ctx.fillRect(84, 0, width - 84, height);
+  ctx.fillStyle = rgba(accent, .96);
+  ctx.fillRect(0, 0, 96, height);
+  ctx.fillStyle = "rgba(0,0,0,.10)";
+  for (let i = 0; i < 5; i += 1) {
+    const x = 96 + ((t * 42 + i * 140) % Math.max(width, 1));
+    ctx.fillRect(x, 0, 28, height);
+  }
+}
+
+function drawAurora(ctx, width, height, t, accent, gold) {
+  for (let i = 0; i < 4; i += 1) {
+    const x = width * (.2 + .22 * i + Math.sin(t * .8 + i) * .08);
+    const y = height * (.35 + Math.cos(t * .7 + i * 1.4) * .22);
+    const r = Math.max(width, height) * (.42 - i * .04);
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+    grad.addColorStop(0, rgba(i % 2 ? gold : accent, .22));
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+  }
+}
+
+function drawCircuit(ctx, width, height, t, accent) {
+  ctx.strokeStyle = rgba(accent, .32);
+  ctx.lineWidth = 1;
+  const offset = (t * 32) % 42;
+  for (let x = -42 + offset; x < width + 42; x += 42) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x + 18, height * .34);
+    ctx.lineTo(x + 4, height);
+    ctx.stroke();
+  }
+  ctx.fillStyle = rgba(accent, .58);
+  for (let i = 0; i < 8; i += 1) {
+    const x = (i * 97 + t * 54) % width;
+    const y = 18 + (i % 3) * (height / 3);
+    ctx.beginPath();
+    ctx.arc(x, y, 2 + Math.sin(t * 4 + i) * 1.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawLiveCard(ctx, width, height, t, accent) {
+  ctx.fillStyle = rgba(accent, .92);
+  ctx.fillRect(0, 0, 86, height);
+  ctx.strokeStyle = rgba(accent, .58);
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let x = 104; x < width - 16; x += 8) {
+    const y = height * .5 + Math.sin(t * 5 + x * .045) * height * .20;
+    if (x === 104) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,.18)";
+  ctx.fillRect(86 + ((t * 90) % Math.max(width - 86, 1)), 0, 2, height);
 }
 
 function createIcon(third) {
