@@ -18,7 +18,7 @@
 * Typografie-Einstellungen für Titel und Handle
 * Rahmenoptionen inklusive Animationen
 * Drei Interface-Themes: Studio Grün, Midnight Blau und Ember Rot
-* Speicherung der Konfiguration im Browser über `localStorage`
+* Speicherung der Konfiguration im Browser über `localStorage` und über lokale Konfigurationsdateien
 
 ## Projektstruktur
 
